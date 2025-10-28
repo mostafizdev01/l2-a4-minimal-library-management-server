@@ -1,6 +1,5 @@
 import express, { Request, Response } from "express"
 import { Borrows } from "../models/borrow.model";
-import { title } from "process";
 
 export const borrowRoutes = express.Router()
 
@@ -9,7 +8,7 @@ export const borrowRoutes = express.Router()
 borrowRoutes.post('/', async (req: Request, res: Response) => {
     try {
         const body = req.body;
-
+        
         //// used static model
         await Borrows.BorrowCalculate(body.book, body.quantity)
         
@@ -35,7 +34,8 @@ borrowRoutes.get('/', async (req: Request, res: Response) => {
         {
             $group: {
                 _id: "$book",
-                totalQuantity: {$sum: "$quantity"}
+                totalQuantity: {$sum: "$quantity"},
+                dueDate: {$max: "$dueDate"}
             }
         },
         {
@@ -56,7 +56,8 @@ borrowRoutes.get('/', async (req: Request, res: Response) => {
                     title: "$bookInfo.title",
                     isbn: "$bookInfo.isbn"
                 },
-                totalQuantity: 1 
+                totalQuantity: 1,
+                dueDate: 1
             }
         }
        ])

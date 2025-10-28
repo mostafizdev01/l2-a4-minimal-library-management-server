@@ -26,7 +26,7 @@ bookRoutes.post('/', async (req: Request, res: Response) => {
             data
         })
     } catch (error) {
-        res.status(403).json({
+        res.status(203).json({
             success: false,
             message: "Validation failed",
             error
@@ -37,7 +37,13 @@ bookRoutes.post('/', async (req: Request, res: Response) => {
 // find all book data
 bookRoutes.get('/', async (req: Request, res: Response) => {
     try {
-        const { filter, sortBy = 'createdAt', sort = 'desc', limit = '10' } = req.query;
+        const { filter, sortBy = 'createdAt', sort = 'desc', limit="5", page="1" } = req.query;
+
+        const pageNumber = parseInt(page as string)
+        const limitNumber = parseInt(limit as string)
+
+        const skip = (pageNumber -1) * limitNumber;
+        
 
         // Filtering
         const filterCondition = filter ? { genre: filter } : {};
@@ -46,14 +52,20 @@ bookRoutes.get('/', async (req: Request, res: Response) => {
         const sortCondition: { [sortBy: string]: 1 | -1 } = {};
         sortCondition[sortBy as string] = sort === 'asc' ? 1 : -1;
 
+        const total = await Book.countDocuments();
+
         // Fetch from DB
         const books = await Book.find(filterCondition)
             .sort(sortCondition)
-            .limit(Number(limit));
+            .skip(skip)
+            .limit(limitNumber)
 
         res.json({
             success: true,
             message: "Books retrieved successfully",
+            totalPage: Math.ceil(total / limitNumber),
+            pageNumber,
+            limitNumber,
             data: books,
         });
     } catch (error) {
@@ -119,7 +131,7 @@ bookRoutes.delete('/:bookId', async (req: Request, res: Response) => {
         if (data === null) {
             res.status(301).json({
                 success: false,
-                message: "Book Not Available 🤕"
+                message: "Book Not Found! 🤕"
             })
         }
         res.status(201).json({
