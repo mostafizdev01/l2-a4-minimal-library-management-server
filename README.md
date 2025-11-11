@@ -83,9 +83,6 @@ Response
 }
 ```
 
-## Explaination video link
-
-[Click to view the video](https://drive.google.com/file/d/1iiJ02gEEuQsjEpSjq0YG25dFFOtfKr-u/view?usp=sharing)
 
 ## Deployment link
 
