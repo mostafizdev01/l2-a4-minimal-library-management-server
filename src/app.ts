@@ -16,7 +16,7 @@ app.use("/api", booksRoutes);
 app.use("/api", borrowsRoutes);
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({
-    message: "Welcome to Library management",
+    message: "Welcome to Library management API",
     success: true,
     info: "Visit README file for documentation https://github.com/raselahmedweb/level-2-assignment-3/blob/main/README.md",
   });
